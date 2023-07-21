@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <stdexcept>
 #include <vector>
 
@@ -11,7 +12,7 @@ class SortedArray {
     int len = 0;
     int maxSize = 0;
 
-    int getInsertionPoint(T& elem) {
+    int getInsertionPoint(const T& elem) {
         int left = 0, right = len;
         while(left < right) {
             int mid = (left+right)/2;
@@ -31,13 +32,20 @@ class SortedArray {
 public:
     SortedArray(int n) : maxSize(n) {
         arr = new T[n];
+        memset(arr, 0, maxSize * sizeof(T));
+    }
+
+    SortedArray(vector<T>&& vec) : SortedArray(vec.size()) {
+        std::sort(vec.begin(), vec.end());
+        memcpy(arr, vec.data(), sizeof(T) * vec.size());
+        len = vec.size();
     }
 
     ~SortedArray() {
         delete arr;
     }
 
-    void insert(T &&val) {
+    void insert(const T& val) {
         if(len == maxSize) {
             throw runtime_error("cannot insert element - the array is full!");
         }
@@ -49,6 +57,24 @@ public:
         len++;
     }
 
+  
+
+    void remove(int idx) {
+        remove(idx, idx+1);
+    }
+
+    void remove(int start, int end) {
+        int count = end-start;
+        memset(arr+start, 0, count * sizeof(T));
+        if(end != len) {
+            moveArray(end, -count);
+        }
+        len -= count;
+    }
+
+    unsigned capacity() {
+        return maxSize;
+    }
 
     unsigned size() {
         return len;

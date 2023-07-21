@@ -14,15 +14,19 @@ bool LeafNode::update(int key, int value) {
     return false;
 }
 
+bool LeafNode::isFull() {
+    return data.size() == maxSize;
+}
+
 void LeafNode::insert(int key, int value) {
-    if(data.size() == maxSize) {
+    if(isFull()) {
         throw runtime_error("node is full");
     }
 
     data.insert({key, value});
 }
 
-LeafNode* LeafNode::splitNode(int newKey, int newValue) {
+LeafNode* LeafNode::split(int newKey, int newValue) {
     LeafNode* nodeToInsert = this;
     auto splitNode = new LeafNode();
     auto it = data.begin();
