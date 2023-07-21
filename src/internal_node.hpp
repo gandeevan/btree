@@ -9,7 +9,13 @@ class InternalNode : public Node {
 public:
     friend class BTree;
 
-    InternalNode() : Node(INTERNAL_NODE_TYPE), data(MAX_NODE_SIZE) {
+    InternalNode() : Node(INTERNAL_NODE_TYPE), data(MAX_NODE_SIZE+1) {
+
+    }
+
+    InternalNode(int key, Node* left, Node* right) : InternalNode() {
+        data.insert({INT_MIN, left});
+        data.insert({key, right});
     }
 
     unsigned size();
@@ -17,7 +23,7 @@ public:
     void insert(int key, Node* node);
 
 private:
-    InternalNode* split();
 
+    std::pair<int, InternalNode*> split(int key, InternalNode* node);
     SortedArray<std::pair<int, Node*>> data;
 };
