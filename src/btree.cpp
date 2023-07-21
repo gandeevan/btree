@@ -67,8 +67,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
 
     auto internalNode = reinterpret_cast<InternalNode *>(node);
     if(!internalNode->isFull()) {
-        auto newEntry = std::pair<int, Node*>{newKey, newNode};
-        internalNode->data.insert(newEntry);
+        internalNode->data.insert({newKey, newNode});
         return {-1, nullptr};
     } 
     

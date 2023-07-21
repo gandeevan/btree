@@ -7,7 +7,7 @@
 #include "node.hpp"
 #include "internal_node.hpp"
 #include "leaf_node.hpp"
-#include "sorted_vector.hpp"
+#include "sorted_array.hpp"
 
 using namespace std;
 

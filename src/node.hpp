@@ -1,5 +1,5 @@
 #pragma once
-// should always be an even number for the sake of simplicity during 
+
 #define MAX_NODE_SIZE 4
 
 #define UNDEFINED 0

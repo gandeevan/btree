@@ -2,16 +2,14 @@
 
 #include <map>
 #include "node.hpp"
-#include "sorted_vector.hpp"
-
+#include "sorted_array.hpp"
 using namespace std;
 
 class InternalNode : public Node {
 public:
     friend class BTree;
 
-    InternalNode() : Node(INTERNAL_NODE_TYPE) {
-
+    InternalNode() : Node(INTERNAL_NODE_TYPE), data(MAX_NODE_SIZE) {
     }
 
     unsigned size();
@@ -21,5 +19,5 @@ public:
 private:
     InternalNode* split();
 
-    SortedVector<std::pair<int, Node*>> data;
+    SortedArray<std::pair<int, Node*>> data;
 };
