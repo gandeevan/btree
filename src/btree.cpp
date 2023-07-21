@@ -55,7 +55,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
         }
 
         // leaf node needs to be split
-        LeafNode *splitNode = leaf->splitNode(key, value);
+        LeafNode *splitNode = leaf->split(key, value);
         return {splitNode->data.begin()->first, splitNode};
     }
 
