@@ -26,16 +26,16 @@ Node* BTree::traverseToNextLevel(InternalNode* node, int key) {
     auto sv = node->data;
     for(int i=1; i<sv.size(); i++) {
         auto kv = sv.at(i);
-        if(key < kv.first) {
+        if(key < kv.first()) {
             auto prev_kv = sv.at(i-1);
-            return prev_kv.second;
+            return prev_kv.second();
         }
     }
-    return sv.at(sv.size()-1).second;
+    return sv.at(sv.size()-1).second();
 }
 
 LeafNode* BTree::traverseToLeafNode(Node* node, int key) {
-    if(node->getNodeType() == LEAF_NODE_TYPE) {
+    if(node->nodeType() == LEAF_NODE_TYPE) {
         return reinterpret_cast<LeafNode *>(node);
     } 
 
@@ -44,12 +44,12 @@ LeafNode* BTree::traverseToLeafNode(Node* node, int key) {
 }
 
 std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) {
-    if(node->getNodeType() == LEAF_NODE_TYPE) {
+    if(node->nodeType() == LEAF_NODE_TYPE) {
         auto leaf = reinterpret_cast<LeafNode *>(node);
         if(leaf->update(key, value)) {
             return {-1, nullptr};
         }
-        if(leaf->size() < leaf->maxSize) {
+        if(leaf->size() < leaf->capacity()) {
             leaf->insert(key, value);
             return {-1, nullptr};
         }

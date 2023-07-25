@@ -25,6 +25,7 @@ class SortedArray {
         return left;
     }
 
+    
     void moveArray(int idx, int pos) {
         memcpy(arr+idx+pos, arr+idx, (len-idx)*sizeof(T));
     }
@@ -45,6 +46,13 @@ public:
         delete arr;
     }
 
+    int get(const T& val) {
+        int idx = getInsertionPoint(val);
+        if(idx>0 && arr[idx-1] == val)
+            return idx-1;
+        return -1;
+    }
+
     void insert(const T& val) {
         if(len == maxSize) {
             throw runtime_error("cannot insert element - the array is full!");
@@ -56,8 +64,6 @@ public:
         arr[idx] = val;
         len++;
     }
-
-  
 
     void remove(int idx) {
         remove(idx, idx+1);

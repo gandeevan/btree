@@ -5,17 +5,12 @@ unsigned LeafNode::size() {
     return data.size();
 }
 
-
 bool LeafNode::update(int key, int value) {
     if(data.find(key) != data.end()) {
         data[key] = value;   
         return true;     
     }
     return false;
-}
-
-bool LeafNode::isFull() {
-    return data.size() == maxSize;
 }
 
 void LeafNode::insert(int key, int value) {

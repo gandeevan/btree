@@ -8,18 +8,28 @@
 
 class Node {
 protected:
-   int nodeType = UNDEFINED;  
-   int maxSize = MAX_NODE_SIZE;
+   int _nodeType;  
+   int _capacity = MAX_NODE_SIZE;
 public:
     friend class BTree;
 
-    Node(int _nodeType) : nodeType(_nodeType) {
+    Node(int nodeType) : _nodeType(nodeType) {
 
     };
 
+    virtual ~Node() {}
+
+    virtual bool isFull() {
+        return size() == capacity();
+    }
+
     virtual unsigned size() = 0;
 
-    int getNodeType() {
-        return nodeType;
+    virtual int capacity() {
+        return _capacity;
+    }
+
+    int nodeType() {
+        return _nodeType;
     }
 };

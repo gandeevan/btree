@@ -13,7 +13,6 @@ public:
     }
 
     unsigned size();
-    bool isFull();
     bool update(int key, int value);
     void insert(int key, int value);
 private:
