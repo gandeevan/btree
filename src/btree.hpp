@@ -13,17 +13,17 @@ using namespace std;
 
 class BTree {
 private:
-    Node* root;
+    Node* root_;
 
-    Node* traverseToNextLevel(InternalNode* node, int key);
+    Node* traverseToNextLevel(InternalNode* node, int key) const;
+    LeafNode* traverseToLeafNode(Node* node, int key) const;
     std::pair<int, Node*> insertOrUpdateImpl(Node* node, int key, int value);
-    LeafNode* traverseToLeafNode(Node* node, int key);
 public:
     BTree();
     ~BTree();
 
     void insertOrUpdate(int key, int value);
-    optional<int> get(int key);
+    optional<int> get(int key) const;
     bool remove(int key);
 };
 

@@ -15,15 +15,15 @@
 
 
 BTree::BTree() {
-    root = new LeafNode();
+    root_ = new LeafNode();
 }
 
 BTree::~BTree() {
     // TODO: delete the tree
 }
 
-Node* BTree::traverseToNextLevel(InternalNode* node, int key) {
-    auto sv = node->data;
+Node* BTree::traverseToNextLevel(InternalNode* node, int key) const {
+    auto& sv = node->data();
     for(int i=1; i<sv.size(); i++) {
         auto kv = sv.at(i);
         if(key < kv.first()) {
@@ -34,7 +34,7 @@ Node* BTree::traverseToNextLevel(InternalNode* node, int key) {
     return sv.at(sv.size()-1).second();
 }
 
-LeafNode* BTree::traverseToLeafNode(Node* node, int key) {
+LeafNode* BTree::traverseToLeafNode(Node* node, int key) const {
     if(node->nodeType() == LEAF_NODE_TYPE) {
         return reinterpret_cast<LeafNode *>(node);
     } 
@@ -67,7 +67,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
 
     auto internalNode = reinterpret_cast<InternalNode *>(node);
     if(!internalNode->isFull()) {
-        internalNode->data.insert({newKey, newNode});
+        internalNode->data_.insert({newKey, newNode});
         return {-1, nullptr};
     } 
     
@@ -77,7 +77,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
 }
 
 void BTree::insertOrUpdate(int key, int value) {
-   auto [newKey, newNode] = insertOrUpdateImpl(root, key, value);
+   auto [newKey, newNode] = insertOrUpdateImpl(root_, key, value);
    
    // the root has been split, we have a new root
    if(newNode != nullptr) {
@@ -92,8 +92,8 @@ bool BTree::remove(int key) {
 }
 
 
-std::optional<int> BTree::get(int key) {
-    auto leafNode = traverseToLeafNode(root, key);
+std::optional<int> BTree::get(int key) const {
+    auto leafNode = traverseToLeafNode(root_, key);
     auto it = leafNode->data.find(key);
     if(it != leafNode->data.end()) {
         return it->second;

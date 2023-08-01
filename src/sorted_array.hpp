@@ -1,22 +1,25 @@
 #pragma once
 
 #include <cstring>
+#include <memory>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
 template<typename T>
 class SortedArray {
-    T* arr;
-    int len = 0;
-    int maxSize = 0;
+private:
+    std::unique_ptr<T[]> arr_;
+    int len_ = 0;
+    int maxSize_ = 0;
 
-    int getInsertionPoint(const T& elem) {
-        int left = 0, right = len;
+    int getInsertionPoint(const T& elem) const {
+        int left = 0, right = len_;
         while(left < right) {
             int mid = (left+right)/2;
-            if(arr[mid] > elem) {
+            if(arr_[mid] > elem) {
                 right = mid;        
             } else {
                left = mid+1;     
@@ -27,42 +30,57 @@ class SortedArray {
 
     
     void moveArray(int idx, int pos) {
-        memcpy(arr+idx+pos, arr+idx, (len-idx)*sizeof(T));
+        memcpy(arr_.get()+idx+pos, arr_.get()+idx, (len_-idx)*sizeof(T));
     }
 
 public:
-    SortedArray(int n) : maxSize(n) {
-        arr = new T[n];
-        memset(arr, 0, maxSize * sizeof(T));
+    SortedArray(int n) : maxSize_(n) {
+        arr_.reset(new T[n]);
+        memset(arr_.get(), 0, maxSize_ * sizeof(T));
     }
 
     SortedArray(vector<T>&& vec) : SortedArray(vec.size()) {
         std::sort(vec.begin(), vec.end());
-        memcpy(arr, vec.data(), sizeof(T) * vec.size());
-        len = vec.size();
+        memcpy(arr_.get(), vec.data(), sizeof(T) * vec.size());
+        len_ = vec.size();
     }
 
     ~SortedArray() {
-        delete arr;
     }
 
-    int get(const T& val) {
+    bool operator==(const SortedArray<T>& other) const {
+        if(this->size() != other.size()) {
+            std::cout << "size doesn't match, returning false";
+            return false;
+        }
+
+        for(int i=0; i<this->size(); i++) {
+            if(this->at(i) != other.at(i)) {
+                std::cout << "Elements don't match at index " << i << " " << this->at(i) << " != " << other.at(i);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    int find(const T& val) const {
         int idx = getInsertionPoint(val);
-        if(idx>0 && arr[idx-1] == val)
+        if(idx>0 && arr_[idx-1] == val)
             return idx-1;
         return -1;
     }
 
     void insert(const T& val) {
-        if(len == maxSize) {
+        if(len_ == maxSize_) {
             throw runtime_error("cannot insert element - the array is full!");
         }
         auto idx = getInsertionPoint(val);
-        if(idx != len) {
+        if(idx != len_) {
             moveArray(idx, 1);
         } 
-        arr[idx] = val;
-        len++;
+        arr_[idx] = val;
+        len_++;
     }
 
     void remove(int idx) {
@@ -71,24 +89,23 @@ public:
 
     void remove(int start, int end) {
         int count = end-start;
-        memset(arr+start, 0, count * sizeof(T));
-        if(end != len) {
+        memset(arr_.get()+start, 0, count * sizeof(T));
+        if(end != len_) {
             moveArray(end, -count);
         }
-        len -= count;
+        len_ -= count;
     }
 
-    unsigned capacity() {
-        return maxSize;
+    unsigned capacity() const {
+        return maxSize_;
     }
 
-    unsigned size() {
-        return len;
+    unsigned size() const {
+        return len_;
     }
 
-
-    const T& at(int index) {
-        return arr[index];
+    const T& at(int index) const {
+        return arr_[index];
     }
 };
 

@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "src/sorted_array.hpp"
 
+// TODO:
+// 1. Add a unit test for the find() method.
 
 TEST(SortedArrayTest, TestInsert) {
     SortedArray<int> arr(5);
