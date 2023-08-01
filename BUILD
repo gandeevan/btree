@@ -15,6 +15,13 @@ cc_test(
 )
 
 cc_test(
+    name="internal_node_test", 
+    srcs=["tests/internal_node_test.cpp"], 
+    deps=["@com_google_googletest//:gtest", "//:btree"],
+    linkopts = DEFAULT_LINKOPTS
+)
+
+cc_test(
     name="sorted_array_test", 
     srcs=["tests/sorted_array_test.cpp"], 
     deps=["@com_google_googletest//:gtest", "//:btree"],
