@@ -51,10 +51,12 @@ public:
         data_.insert({key, right});
     }
 
+    std::pair<int, Node*> at(int idx);
     const SortedArray<Value>& data();
     unsigned size();
     void insert(int key, Node* node);
     std::pair<int, InternalNode*> split(int key, Node* node);
+    void print();
 
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that

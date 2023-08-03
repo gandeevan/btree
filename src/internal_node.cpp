@@ -1,6 +1,7 @@
 #include "internal_node.hpp"
 #include "node.hpp"
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 
@@ -10,7 +11,24 @@ std::ostream& operator<<(std::ostream& os, const InternalNode::Value& other) {
     return os;
 }
 
+void InternalNode::print() {
+    std::stringstream ss;
+    ss << "Node(" << this << "): [ ";
+    for(auto i=0; i<data_.size(); i++) {
+        auto [key, node] = data_.at(i).data;
+        ss << " (k="<<key<<",v="<<node<<") ";
+    }
+    ss << " ] ";
+    std::cout << ss.str() << endl;
+}
 
+std::pair<int, Node*> InternalNode::at(int idx) {
+    if(idx >= this->size()) {
+        throw runtime_error("index out of bounds");
+    }
+    return data_.at(idx).data;
+}
+ 
 unsigned InternalNode::size() {
     // Returns the number of pointers in the internal node
     return data_.size();

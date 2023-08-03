@@ -12,8 +12,10 @@
 
 #include "btree.hpp"
 #include "internal_node.hpp"
+#include "node.hpp"
 #include <iterator>
 #include <stdexcept>
+#include <queue>
 
 
 BTree::BTree() {
@@ -95,10 +97,56 @@ bool BTree::remove(int key) {
 }
 
 
+void BTree::print() {
+    int maxLevel = 0;
+    std::map<int, vector<Node*>> levelMap; 
+
+    if(root_ == nullptr) {
+        std::cout << "Root equals null!";
+        return;
+    }
+
+    std::queue<std::pair<int, Node *>> q;
+    q.push({0, root_});
+    while(!q.empty()) {
+        auto [level, node] = q.front();
+        q.pop();
+
+        if(level > maxLevel) {
+            maxLevel = level;
+        }
+
+        if(node->nodeType() == INTERNAL_NODE_TYPE) {
+            auto inode = reinterpret_cast<InternalNode*>(node);
+            for(int i=0; i<inode->size(); i++) {
+                auto [_, childNode] = inode->at(i);
+                q.push({level+1, childNode});
+            }
+        }
+
+        if(levelMap.find(level) == levelMap.end()) {
+            levelMap[level] = {node};
+        } else {
+            levelMap[level].push_back(node);
+        }
+    }
+
+    // print the nodes at each level
+    for(auto it = levelMap.begin(); it != levelMap.end(); it++) {
+        auto level = it->first;
+        auto& nodes = it->second;
+        std::cout<<"Nodes at level " << level << ":" << endl;
+        for(auto &node : nodes) {
+            node->print();
+        }
+    }
+}
+
+
 std::optional<int> BTree::get(int key) const {
     auto leafNode = traverseToLeafNode(root_, key);
-    auto it = leafNode->data.find(key);
-    if(it != leafNode->data.end()) {
+    auto it = leafNode->data_.find(key);
+    if(it != leafNode->data_.end()) {
         return it->second;
     } 
     return optional<int>();

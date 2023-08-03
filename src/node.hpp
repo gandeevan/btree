@@ -23,6 +23,8 @@ public:
         return size() == capacity();
     }
 
+    virtual void print() = 0;
+
     virtual unsigned size() = 0;
 
     virtual int capacity() {
