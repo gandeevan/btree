@@ -11,7 +11,9 @@
 
 
 #include "btree.hpp"
+#include "internal_node.hpp"
 #include <iterator>
+#include <stdexcept>
 
 
 BTree::BTree() {
@@ -49,31 +51,31 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
         if(leaf->update(key, value)) {
             return {-1, nullptr};
         }
-        if(leaf->size() < leaf->capacity()) {
+        if(!leaf->isFull()) {
             leaf->insert(key, value);
             return {-1, nullptr};
+        } else {
+            return leaf->split(key, value);
         }
-
-        // leaf node needs to be split
-        LeafNode *splitNode = leaf->split(key, value);
-        return {splitNode->data.begin()->first, splitNode};
     }
 
+    // The current node is an internal node
     auto nextNode = traverseToNextLevel(reinterpret_cast<InternalNode *>(node), key);
     auto [newKey, newNode] = insertOrUpdateImpl(nextNode, key, value); 
 
+    // Was able to insert the node at the next level without any splits
     if(newNode == nullptr)
         return {-1, nullptr};
 
+    // The next level was split because of the insert, we now need to add the pointer to the new node
+    // in the current level. 
     auto internalNode = reinterpret_cast<InternalNode *>(node);
     if(!internalNode->isFull()) {
         internalNode->data_.insert({newKey, newNode});
         return {-1, nullptr};
-    } 
-    
-    // TODO: split the internal node and propogate a key to the upper level
-
-    throw std::runtime_error("Function not implemented");
+    } else {
+        return internalNode->split(newKey, newNode);
+    }
 }
 
 void BTree::insertOrUpdate(int key, int value) {
@@ -81,14 +83,15 @@ void BTree::insertOrUpdate(int key, int value) {
    
    // the root has been split, we have a new root
    if(newNode != nullptr) {
-        // auto newRoot = new InternalNode();
+        auto newRoot = new InternalNode(newKey, root_, newNode);
+        root_ = newRoot;
    }
 
-   throw std::runtime_error("Function not implemented");
+   return;
 }
 
 bool BTree::remove(int key) {
-    return false;
+    throw std::runtime_error("Not implemented");
 }
 
 

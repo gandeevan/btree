@@ -21,7 +21,7 @@ void LeafNode::insert(int key, int value) {
     data.insert({key, value});
 }
 
-LeafNode* LeafNode::split(int newKey, int newValue) {
+std::pair<int, LeafNode*> LeafNode::split(int newKey, int newValue) {
     LeafNode* nodeToInsert = this;
     auto splitNode = new LeafNode();
     auto it = data.begin();
@@ -41,5 +41,5 @@ LeafNode* LeafNode::split(int newKey, int newValue) {
     }
 
     nodeToInsert->insert(newKey, newValue);
-    return splitNode;
+    return {splitNode->data.begin()->first, splitNode};
 }

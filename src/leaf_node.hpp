@@ -16,6 +16,6 @@ public:
     bool update(int key, int value);
     void insert(int key, int value);
 private:
-    LeafNode* split(int key, int value);
+    std::pair<int, LeafNode*> split(int key, int value);
     map<int, int> data;
 };
