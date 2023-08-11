@@ -22,6 +22,7 @@ public:
     BTree();
     ~BTree();
 
+    void print();
     void insertOrUpdate(int key, int value);
     optional<int> get(int key) const;
     bool remove(int key);
