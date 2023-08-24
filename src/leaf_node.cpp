@@ -56,13 +56,13 @@ std::pair<int, LeafNode*> LeafNode::split(int newKey, int newValue) {
     std::advance(it, data_.size()/2);
 
     // makes sure the two nodes are equal in size after the split
-    if(data_.size()%2 != 0) {
-        if(newKey > it->first) {
-            nodeToInsert = splitNode;
-            it++;    
-        }
-    }
-
+    if(newKey > it->first) {
+        nodeToInsert = splitNode;
+        if(data_.size()%2 != 0) {
+            it++;
+        }  
+    } 
+    
     while(it != data_.end()) {
         splitNode->insert(it->first, it->second);
         it = data_.erase(it);
