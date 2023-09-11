@@ -90,7 +90,7 @@ void BTree::insertOrUpdate(int key, int value) {
    
    // the root has been split, we have a new root
    if(newNode != nullptr) {
-        auto newRoot = new InternalNode(INTERNAL_NODE_CAPACITY(order), newKey, _root, newNode);
+        auto newRoot = new InternalNode(_order, newKey, _root, newNode);
         _root = newRoot;
    }
 

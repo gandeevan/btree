@@ -8,7 +8,7 @@ using namespace std;
 class LeafNode : public Node {
 public:
     friend class BTree;
-    LeafNode(size_t order) : Node(LEAF_NODE_TYPE, LEAF_NODE_CAPACITY(order)) {
+    LeafNode(size_t order) : Node(LEAF_NODE_TYPE, LEAF_NODE_CAPACITY(order)), _order(order) {
 
     }
 

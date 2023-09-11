@@ -45,7 +45,7 @@ std::pair<int, InternalNode*> InternalNode::split(int newKey, Node* newNode) {
     // Create a new split node and copy half of the elements from the current node
     // to the split node. The middle key is promoted to the next level to point to 
     // the split node. 
-    InternalNode* splitNode = new InternalNode(capacity());
+    InternalNode* splitNode = new InternalNode(_order);
     int start = data_.size()/2, end = data_.size();
     for(int i=start; i<end; i++) {
         std::cout << "copying element at index " << i << endl; 

@@ -43,7 +43,7 @@ public:
         friend std::ostream& operator<<(std::ostream& os, const Value& other);
     };
 
-    InternalNode(size_t capacity, int key, Node* left, Node* right) : InternalNode(capacity) {
+    InternalNode(size_t order, int key, Node* left, Node* right) : InternalNode(order) {
         data_.insert({INT_MIN, left});
         data_.insert({key, right});
     }
@@ -59,11 +59,14 @@ public:
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
     // the data item that leads to a split can be inserted before the split. 
-    InternalNode(size_t capacity) : Node(INTERNAL_NODE_TYPE, capacity), data_(capacity+1) {
+    InternalNode(size_t order) : Node(INTERNAL_NODE_TYPE, INTERNAL_NODE_CAPACITY(order)), _order(order), data_(capacity()+1) {
 
     }
 
     Value traverseToNextLevel(int key) const;
 
+    size_t _order;
+
+    // TODO: rename to _data
     SortedArray<Value> data_;
 };
