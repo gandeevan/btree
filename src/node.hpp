@@ -12,6 +12,9 @@ class Node {
 protected:
    int _nodeType;  
    size_t _capacity;
+
+   virtual bool isHalfFull() const = 0;
+
 public:
     friend class BTree;
 

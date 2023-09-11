@@ -88,3 +88,7 @@ InternalNode::Value InternalNode::traverseToNextLevel(int key) const {
 bool InternalNode::eraseElement(const Value& elem) {
     return data_.eraseElement(elem);
 } 
+
+bool InternalNode::isHalfFull() const {
+    return data_.size() >= (_order+1);
+}

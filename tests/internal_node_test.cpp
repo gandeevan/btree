@@ -12,8 +12,27 @@
 // TODO:
 // 1. Test splits with both even and odd number of elements
 
-TEST(InternalNodeTest, Insert) {
+TEST(InternalNodeTest, TestIsFull) {
+    size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
+    InternalNode *node = nullptr;
+    for(size_t i=1; i<internalNodeCapacity; i++) {
+        if(node)
+            ASSERT_FALSE(node->isFull());
+        if(i==1) {
+            auto leftPtr = new LeafNode(DEFAULT_ORDER); 
+            auto rightPtr = new LeafNode(DEFAULT_ORDER);
+            node = new InternalNode(DEFAULT_ORDER, i, leftPtr, rightPtr);
+        } else {
+            auto ptr = new LeafNode(DEFAULT_ORDER);
+            node->insert(i, ptr); 
+        }
+        ASSERT_EQ(node->size(), i+1);
+    }
+    ASSERT_TRUE(node->isFull());
+}
 
+TEST(InternalNodeTest, Insert) {
+    size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
     SortedArray<InternalNode::Value> expectedNodeData(internalNodeCapacity+1);
 
     InternalNode *node;

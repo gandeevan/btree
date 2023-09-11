@@ -7,8 +7,8 @@
 #include <iostream>
 
 #define DEFAULT_ORDER 2
-#define LEAF_NODE_CAPACITY(order) (2*DEFAULT_ORDER)
-#define INTERNAL_NODE_CAPACITY(order) (2*DEFAULT_ORDER)
+#define LEAF_NODE_CAPACITY(order) (2*order)
+#define INTERNAL_NODE_CAPACITY(order) ((2*order)+1)
 
 // TODO: move this to the utilities project
 class my_exception : public std::runtime_error {

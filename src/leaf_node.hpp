@@ -20,6 +20,8 @@ public:
     void print();
     bool empty();
 private:
+    bool isHalfFull() const;
+    
     std::pair<int, LeafNode*> split(int key, int value);
     // TODO: rename this to _data
     map<int, int> data_;

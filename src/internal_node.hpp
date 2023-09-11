@@ -58,10 +58,12 @@ public:
     bool empty();
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
-    // the data item that leads to a split can be inserted before the split. 
+    // the data item that leads to a split can be inserted before the split. This simplifies the split logic.
     InternalNode(size_t order) : Node(INTERNAL_NODE_TYPE, INTERNAL_NODE_CAPACITY(order)), _order(order), data_(capacity()+1) {
 
     }
+
+    bool isHalfFull() const;
 
     Value traverseToNextLevel(int key) const;
 

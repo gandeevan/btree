@@ -25,7 +25,9 @@ bool LeafNode::remove(int key) {
     return false;
 }
 
-
+bool LeafNode::isHalfFull() const {
+    return data_.size() >= _order;
+}
 
 void LeafNode::print() {
     std::stringstream ss;
