@@ -22,8 +22,6 @@ private:
     std::pair<int, Node*> insertOrUpdateImpl(Node* node, int key, int value);
     std::pair<bool, bool> removeImpl(Node* node, int key); 
     bool checkFillFactorInvariant() const;
-    size_t internalNodeCapacity() const;
-    size_t leafNodeCapacity() const;
 public:
     BTree(size_t order = DEFAULT_ORDER);
     ~BTree();

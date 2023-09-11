@@ -38,9 +38,6 @@ BTree::~BTree() {
     // TODO: delete the tree
 }
 
-size_t BTree::leafNodeCapacity() const {
-    return 2*_order;
-}
 
 LeafNode* BTree::traverseToLeafNode(Node* node, int key) const {
     if(node->type() == LEAF_NODE_TYPE) {
