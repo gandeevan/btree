@@ -14,20 +14,19 @@
 
 TEST(InternalNodeTest, Insert) {
     size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
-    size_t leafNodeCapacity = LEAF_NODE_CAPACITY(DEFAULT_ORDER);
 
     SortedArray<InternalNode::Value> expectedNodeData(internalNodeCapacity+1);
 
     InternalNode *node;
     for(size_t i=1; i<internalNodeCapacity; i++) {
         if(i==1) {
-            auto leftPtr = new LeafNode(leafNodeCapacity); 
-            auto rightPtr = new LeafNode(leafNodeCapacity);
+            auto leftPtr = new LeafNode(DEFAULT_ORDER); 
+            auto rightPtr = new LeafNode(DEFAULT_ORDER);
             expectedNodeData.insert({INT_MIN, leftPtr});
-            expectedNodeData.insert({i, rightPtr});
+            expectedNodeData.insert({(int)i, rightPtr});
             node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
         } else {
-            auto ptr = new LeafNode(leafNodeCapacity);
+            auto ptr = new LeafNode(DEFAULT_ORDER);
             expectedNodeData.insert({i, ptr});
             LOG_INFO("inserting element {}", i);
             node->insert(i, ptr); 
@@ -39,7 +38,6 @@ TEST(InternalNodeTest, Insert) {
 
 TEST(InternalNodeTest, SplitNode) {
     size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
-    size_t leafNodeCapacity = LEAF_NODE_CAPACITY(DEFAULT_ORDER);
     size_t insertCount = internalNodeCapacity-1;
 
     InternalNode* node;
@@ -48,13 +46,13 @@ TEST(InternalNodeTest, SplitNode) {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     for(size_t i=1; i<=insertCount; i++) {
         if(i==1) {
-            auto leftPtr = new LeafNode(leafNodeCapacity); //ignore
-            auto rightPtr = new LeafNode(leafNodeCapacity);
+            auto leftPtr = new LeafNode(DEFAULT_ORDER); //ignore
+            auto rightPtr = new LeafNode(DEFAULT_ORDER);
             node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
             data.push_back({INT_MIN, leftPtr});
-            data.push_back({i, rightPtr});
+            data.push_back({(int)i, rightPtr});
         } else {
-            auto ptr = new LeafNode(leafNodeCapacity);
+            auto ptr = new LeafNode(DEFAULT_ORDER);
             node->insert(i, ptr);
             data.push_back({i, ptr});
         }
@@ -63,9 +61,9 @@ TEST(InternalNodeTest, SplitNode) {
     int sizeBeforeSplit = node->size();
 
     ASSERT_TRUE(node->isFull());
-    ASSERT_THROW(node->insert(data.size(), new LeafNode(leafNodeCapacity)), std::runtime_error);
+    ASSERT_THROW(node->insert(data.size(), new LeafNode(DEFAULT_ORDER)), std::runtime_error);
 
-    data.push_back({data.size(), new LeafNode(LEAF_NODE_CAPACITY(DEFAULT_ORDER))});
+    data.push_back({data.size(), new LeafNode(DEFAULT_ORDER)});
     auto [promotedKey, splitNode] = node->split(data.back().first, data.back().second);
 
 

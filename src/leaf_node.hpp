@@ -8,8 +8,7 @@ using namespace std;
 class LeafNode : public Node {
 public:
     friend class BTree;
-
-    LeafNode(size_t capacity) : Node(LEAF_NODE_TYPE, capacity) {
+    LeafNode(size_t order) : Node(LEAF_NODE_TYPE, LEAF_NODE_CAPACITY(order)) {
 
     }
 
@@ -22,5 +21,7 @@ public:
     bool empty();
 private:
     std::pair<int, LeafNode*> split(int key, int value);
+    // TODO: rename this to _data
     map<int, int> data_;
+    size_t _order;
 };

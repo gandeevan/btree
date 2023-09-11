@@ -25,6 +25,8 @@ bool LeafNode::remove(int key) {
     return false;
 }
 
+
+
 void LeafNode::print() {
     std::stringstream ss;
     ss << "Node(" << this << "): [ ";
@@ -67,7 +69,7 @@ std::pair<int, LeafNode*> LeafNode::split(int newKey, int newValue) {
     assert(isFull());
 
     LeafNode* nodeToInsert = this;
-    auto splitNode = new LeafNode(capacity());
+    auto splitNode = new LeafNode(_order);
     auto it = data_.begin();
     std::advance(it, data_.size()/2);
 

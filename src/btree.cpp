@@ -31,7 +31,7 @@
 #endif
 
 BTree::BTree(size_t order) : _order(order) {
-    _root = new LeafNode(leafNodeCapacity());
+    _root = new LeafNode(_order);
 }
 
 BTree::~BTree() {
