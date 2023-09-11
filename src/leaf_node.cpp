@@ -7,8 +7,20 @@
 // 1. Use a sorted array instead of a map to store the key value pairs
 // 2. Implement the accessor operator ([]) for both internal node and leaf node
 
-unsigned LeafNode::size() {
+size_t LeafNode::size() const {
     return data_.size();
+}
+
+bool LeafNode::empty() {
+    return data_.size() == 0;
+}
+
+bool LeafNode::remove(int key) {
+    if(data_.find(key) != data_.end()) {
+        data_.erase(key);
+        return true;
+    }
+    return false;
 }
 
 void LeafNode::print() {

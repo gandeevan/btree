@@ -1,12 +1,14 @@
 /*
-    TODO(Optimizations):
-    - Use an array instead of a map to store the data in the internal/leaf node. 
-
     TODO(Bug Fixes):
     -
 
     TODO(Improvements):
-    - Support duplicate keys
+    - use smart pointers
+    - Use a sorted array instead of a map to store the data in the internal/leaf node. 
+    - On inserts, try distributing the data with the siblings before attempting to split the node.
+    - Merge nodes on deletes when they are less than half full.
+    - Support range queries
+    - Support duplicate keys.
 */
 
 
@@ -16,7 +18,10 @@
 #include <iterator>
 #include <stdexcept>
 #include <queue>
+#include <cassert>
 
+#define TO_INTERNAL_NODE(x) reinterpret_cast<InternalNode *>(x)
+#define TO_LEAF_NODE(x) reinterpret_cast<LeafNode *>(x)
 
 BTree::BTree() {
     root_ = new LeafNode();
@@ -26,30 +31,19 @@ BTree::~BTree() {
     // TODO: delete the tree
 }
 
-Node* BTree::traverseToNextLevel(InternalNode* node, int key) const {
-    auto& sv = node->data();
-    for(int i=1; i<sv.size(); i++) {
-        auto kv = sv.at(i);
-        if(key < kv.first()) {
-            auto prev_kv = sv.at(i-1);
-            return prev_kv.second();
-        }
-    }
-    return sv.at(sv.size()-1).second();
-}
-
 LeafNode* BTree::traverseToLeafNode(Node* node, int key) const {
-    if(node->nodeType() == LEAF_NODE_TYPE) {
-        return reinterpret_cast<LeafNode *>(node);
+    if(node->type() == LEAF_NODE_TYPE) {
+        return TO_LEAF_NODE(node);
     } 
 
-    auto nextNode = traverseToNextLevel(reinterpret_cast<InternalNode *>(node), key);
+
+    auto nextNode = TO_INTERNAL_NODE(node)->traverseToNextLevel(key).second();
     return traverseToLeafNode(nextNode, key);;
 }
 
 std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) {
-    if(node->nodeType() == LEAF_NODE_TYPE) {
-        auto leaf = reinterpret_cast<LeafNode *>(node);
+    if(node->type() == LEAF_NODE_TYPE) {
+        auto leaf = TO_LEAF_NODE(node);
         if(leaf->update(key, value)) {
             return {-1, nullptr};
         }
@@ -62,7 +56,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
     }
 
     // The current node is an internal node
-    auto nextNode = traverseToNextLevel(reinterpret_cast<InternalNode *>(node), key);
+    auto nextNode = TO_INTERNAL_NODE(node)->traverseToNextLevel(key).second();
     auto [newKey, newNode] = insertOrUpdateImpl(nextNode, key, value); 
 
     // Was able to insert the node at the next level without any splits
@@ -71,7 +65,7 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
 
     // The next level was split because of the insert, we now need to add the pointer to the new node
     // in the current level. 
-    auto internalNode = reinterpret_cast<InternalNode *>(node);
+    auto internalNode = TO_INTERNAL_NODE(node);
     if(!internalNode->isFull()) {
         internalNode->data_.insert({newKey, newNode});
         return {-1, nullptr};
@@ -92,8 +86,48 @@ void BTree::insertOrUpdate(int key, int value) {
    return;
 }
 
+std::pair<bool, bool> BTree::removeImpl(Node* node, int key) {
+    if(node->type() == LEAF_NODE_TYPE) {
+        auto leafNode = TO_LEAF_NODE(node);
+        bool ok = leafNode->remove(key);
+        if(!ok || !leafNode->empty()) {
+            return {ok, false};
+        }
+
+        // Delete the leaf node and inform the parent to remove the pointer to the leaf node. 
+        delete leafNode;
+        return {ok, true};
+    }
+
+    assert(node->type() == INTERNAL_NODE_TYPE);
+    const InternalNode::Value& elem = TO_INTERNAL_NODE(node)->traverseToNextLevel(key);
+    auto nextNode = elem.second();
+    auto [found, removePtr] = removeImpl(nextNode, key);
+    if(!found || !removePtr) {
+        assert(removePtr == false);
+        return {found, removePtr};
+    }
+
+    // remove the pointer to the node that was deleted
+    found = TO_INTERNAL_NODE(node)->eraseElement(elem);
+    assert(found);
+
+    throw runtime_error("Not implemented");
+}
+
 bool BTree::remove(int key) {
-    throw std::runtime_error("Not implemented");
+    auto leafNode = traverseToLeafNode(root_, key);
+    bool ok = leafNode->remove(key);
+    if(!ok) {
+        return false;
+    }
+
+    // The leaf node is not empty, we are done
+    if(!leafNode->empty()) {
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -116,11 +150,11 @@ void BTree::print() {
             maxLevel = level;
         }
 
-        if(node->nodeType() == INTERNAL_NODE_TYPE) {
-            auto inode = reinterpret_cast<InternalNode*>(node);
-            for(int i=0; i<inode->size(); i++) {
-                auto [_, childNode] = inode->at(i);
-                q.push({level+1, childNode});
+        if(node->type() == INTERNAL_NODE_TYPE) {
+            auto internalNode = TO_INTERNAL_NODE(node);
+            for(size_t i=0; i<internalNode->size(); i++) {
+                const InternalNode::Value& elem = internalNode->at(i);
+                q.push({level+1, elem.second()});
             }
         }
 

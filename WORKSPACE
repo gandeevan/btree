@@ -5,3 +5,9 @@ http_archive(
     urls = ["https://github.com/google/googletest/archive/release-1.12.0.zip"],
     strip_prefix = "googletest-release-1.12.0",
 )
+
+http_archive(
+    name = "cpputilities",
+    urls = ["https://github.com/gandeevan/cpp-utilities/archive/refs/tags/v0.1.0.zip"],
+    strip_prefix = "cpp-utilities-0.1.0",
+)

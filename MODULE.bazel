@@ -1,0 +1,6 @@
+module(name="btree", version="1.0.0",  compatibility_level = 1)
+
+# TODO: yikes! this is a hack to get around the fact that bazel doesn't fetch the 
+# transitive dependencies of the cpp-utilities repository because I'm fetrching via the legacy workspace
+# rule. I need to figure out how to do this properly.
+bazel_dep(name = "spdlog", version = "1.11.0")

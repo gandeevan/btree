@@ -15,9 +15,9 @@ class BTree {
 private:
     Node* root_;
 
-    Node* traverseToNextLevel(InternalNode* node, int key) const;
     LeafNode* traverseToLeafNode(Node* node, int key) const;
     std::pair<int, Node*> insertOrUpdateImpl(Node* node, int key, int value);
+    std::pair<bool, bool> removeImpl(Node* node, int key); 
 public:
     BTree();
     ~BTree();

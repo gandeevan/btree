@@ -14,7 +14,7 @@ std::ostream& operator<<(std::ostream& os, const InternalNode::Value& other) {
 void InternalNode::print() {
     std::stringstream ss;
     ss << "Node(" << this << "): [ ";
-    for(auto i=0; i<data_.size(); i++) {
+    for(size_t i=0; i<data_.size(); i++) {
         auto [key, node] = data_.at(i).data;
         ss << " (k="<<key<<",v="<<node<<") ";
     }
@@ -22,14 +22,14 @@ void InternalNode::print() {
     std::cout << ss.str() << endl;
 }
 
-std::pair<int, Node*> InternalNode::at(int idx) {
+const InternalNode::Value& InternalNode::at(size_t idx) const {
     if(idx >= this->size()) {
         throw runtime_error("index out of bounds");
     }
-    return data_.at(idx).data;
+    return data_.at(idx);
 }
  
-unsigned InternalNode::size() {
+size_t InternalNode::size() const {
     // Returns the number of pointers in the internal node
     return data_.size();
 }
@@ -53,7 +53,7 @@ std::pair<int, InternalNode*> InternalNode::split(int newKey, Node* newNode) {
     }
     std::cout << "done copying!" << endl;
     int keyToPromote = data_.at(start).first();
-    data_.remove(start, end);
+    data_.eraseIndexRange(start, end);
     return {keyToPromote, splitNode};
 }   
 
@@ -62,9 +62,28 @@ void InternalNode::insert(int key, Node* node) {
     if(isFull()) {
         throw runtime_error("node is full");
     }
-    if(data_.find({key, nullptr}) != -1) {
+    if(!(data_.find({key, nullptr}).has_value())) {
         throw runtime_error("key " + std::to_string(key) +  " already exists in the node");
     }
     data_.insert({key, node});
     return;
 }
+
+bool InternalNode::empty() {
+    return data_.size() == 0;
+}
+
+InternalNode::Value InternalNode::traverseToNextLevel(int key) const {
+    // TODO: binary search
+    for(size_t i=1; i<data_.size(); i++) {
+        auto kv = data_.at(i);
+        if(key < kv.first()) {
+            return data_.at(i-1);
+        }
+    }
+    return data_.at(data_.size()-1);
+}
+
+bool InternalNode::eraseElement(const Value& elem) {
+    return data_.eraseElement(elem);
+} 

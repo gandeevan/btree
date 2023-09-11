@@ -51,19 +51,22 @@ public:
         data_.insert({key, right});
     }
 
-    std::pair<int, Node*> at(int idx);
+    const Value& at(size_t idx) const;
     const SortedArray<Value>& data();
-    unsigned size();
+    size_t size() const;
+    bool eraseElement(const Value& elem);
     void insert(int key, Node* node);
     std::pair<int, InternalNode*> split(int key, Node* node);
     void print();
-
+    bool empty();
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
     // the data item that leads to a split can be inserted before the split. 
     InternalNode() : Node(INTERNAL_NODE_TYPE), data_(capacity()+1) {
 
     }
+
+    Value traverseToNextLevel(int key) const;
 
     SortedArray<Value> data_;
 };

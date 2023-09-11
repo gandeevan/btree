@@ -14,10 +14,12 @@ public:
     }
 
     std::pair<int, int> at(int idx);
-    unsigned size();
+    size_t size() const;
+    bool remove(int key);
     bool update(int key, int value);
     void insert(int key, int value);
     void print();
+    bool empty();
 private:
     std::pair<int, LeafNode*> split(int key, int value);
     map<int, int> data_;

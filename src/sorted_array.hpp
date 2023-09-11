@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <vector>
 #include <iostream>
+#include <algorithm>
+#include <optional>
 
 using namespace std;
 
@@ -12,11 +14,11 @@ template<typename T>
 class SortedArray {
 private:
     std::unique_ptr<T[]> arr_;
-    int len_ = 0;
-    int maxSize_ = 0;
+    size_t len_ = 0;
+    size_t capacity_ = 0;
 
-    int getInsertionPoint(const T& elem) const {
-        int left = 0, right = len_;
+    size_t getInsertionPoint(const T& elem) const {
+        size_t left = 0, right = len_;
         while(left < right) {
             int mid = (left+right)/2;
             if(arr_[mid] > elem) {
@@ -29,14 +31,14 @@ private:
     }
 
     
-    void moveArray(int idx, int pos) {
-        memcpy(arr_.get()+idx+pos, arr_.get()+idx, (len_-idx)*sizeof(T));
+    void moveArray(size_t idx, size_t pos) {
+        memcpy((void *)(arr_.get()+idx+pos), (void *)(arr_.get()+idx), (len_-idx)*sizeof(T));
     }
 
 public:
-    SortedArray(int n) : maxSize_(n) {
+    SortedArray(size_t n) : capacity_(n) {
         arr_.reset(new T[n]);
-        memset(arr_.get(), 0, maxSize_ * sizeof(T));
+        memset((void *)arr_.get(), 0, capacity_ * sizeof(T));
     }
 
     SortedArray(vector<T>&& vec) : SortedArray(vec.size()) {
@@ -54,7 +56,7 @@ public:
             return false;
         }
 
-        for(int i=0; i<this->size(); i++) {
+        for(size_t i=0; i<this->size(); i++) {
             if(this->at(i) != other.at(i)) {
                 std::cout << "Elements don't match at index " << i << " " << this->at(i) << " != " << other.at(i);
                 return false;
@@ -64,15 +66,15 @@ public:
         return true;
     }
 
-    int find(const T& val) const {
+    std::optional<size_t> find(const T& val) const {
         int idx = getInsertionPoint(val);
         if(idx>0 && arr_[idx-1] == val)
             return idx-1;
-        return -1;
+        return {};
     }
 
     void insert(const T& val) {
-        if(len_ == maxSize_) {
+        if(len_ == capacity_) {
             throw runtime_error("cannot insert element - the array is full!");
         }
         auto idx = getInsertionPoint(val);
@@ -83,28 +85,40 @@ public:
         len_++;
     }
 
-    void remove(int idx) {
-        remove(idx, idx+1);
+    bool eraseElement(const T& val) {
+        auto idx = find(val);
+        if(!idx.has_value()) {
+            return false;
+        }
+        eraseIndex(idx.value());
+        return true;
     }
 
-    void remove(int start, int end) {
-        int count = end-start;
-        memset(arr_.get()+start, 0, count * sizeof(T));
+    void eraseIndex(size_t idx) {
+        if(idx >= size()) {
+            throw runtime_error("index out of bounds");
+        }
+        eraseIndexRange(idx, idx+1);
+    }
+
+    void eraseIndexRange(size_t start, size_t end) {
+        size_t count = end-start;
+        memset((void *)(arr_.get()+start), 0, count * sizeof(T));
         if(end != len_) {
             moveArray(end, -count);
         }
         len_ -= count;
     }
 
-    unsigned capacity() const {
-        return maxSize_;
+    size_t capacity() const {
+        return capacity_;
     }
 
-    unsigned size() const {
+    size_t size() const {
         return len_;
     }
 
-    const T& at(int index) const {
+    const T& at(size_t index) const {
         return arr_[index];
     }
 };
