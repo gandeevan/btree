@@ -13,7 +13,6 @@
 // 1. Test splits with both even and odd number of elements
 
 TEST(InternalNodeTest, Insert) {
-    size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
 
     SortedArray<InternalNode::Value> expectedNodeData(internalNodeCapacity+1);
 
@@ -24,7 +23,7 @@ TEST(InternalNodeTest, Insert) {
             auto rightPtr = new LeafNode(DEFAULT_ORDER);
             expectedNodeData.insert({INT_MIN, leftPtr});
             expectedNodeData.insert({(int)i, rightPtr});
-            node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
+            node = new InternalNode(DEFAULT_ORDER, i, leftPtr, rightPtr);
         } else {
             auto ptr = new LeafNode(DEFAULT_ORDER);
             expectedNodeData.insert({i, ptr});
@@ -48,7 +47,7 @@ TEST(InternalNodeTest, SplitNode) {
         if(i==1) {
             auto leftPtr = new LeafNode(DEFAULT_ORDER); //ignore
             auto rightPtr = new LeafNode(DEFAULT_ORDER);
-            node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
+            node = new InternalNode(DEFAULT_ORDER, i, leftPtr, rightPtr);
             data.push_back({INT_MIN, leftPtr});
             data.push_back({(int)i, rightPtr});
         } else {
