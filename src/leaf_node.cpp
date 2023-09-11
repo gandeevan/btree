@@ -2,6 +2,8 @@
 #include "leaf_node.hpp"
 #include <sstream>
 #include <stdexcept>
+#include <cassert>
+#include "constants.hpp"
 
 // TODO: 
 // 1. Use a sorted array instead of a map to store the key value pairs
@@ -39,7 +41,7 @@ std::pair<int, int> LeafNode::at(int idx) {
     auto it = data_.begin();
     std::advance(it, idx);
     if(it == data_.end()) {
-        throw runtime_error("index out of bounds");
+        THROW_EXCEPTION("index out of bounds");
     } else {
         return *it;
     }
@@ -55,15 +57,17 @@ bool LeafNode::update(int key, int value) {
 
 void LeafNode::insert(int key, int value) {
     if(isFull()) {
-        throw runtime_error("node is full");
+        THROW_EXCEPTION("node is full");
     }
 
     data_.insert({key, value});
 }
 
 std::pair<int, LeafNode*> LeafNode::split(int newKey, int newValue) {
+    assert(isFull());
+
     LeafNode* nodeToInsert = this;
-    auto splitNode = new LeafNode();
+    auto splitNode = new LeafNode(capacity());
     auto it = data_.begin();
     std::advance(it, data_.size()/2);
 

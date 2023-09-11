@@ -9,7 +9,7 @@ class LeafNode : public Node {
 public:
     friend class BTree;
 
-    LeafNode() : Node(LEAF_NODE_TYPE) {
+    LeafNode(size_t capacity) : Node(LEAF_NODE_TYPE, capacity) {
 
     }
 

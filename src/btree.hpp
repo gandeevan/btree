@@ -11,15 +11,21 @@
 
 using namespace std;
 
+#define DEFAULT_ORDER 2
+
 class BTree {
 private:
-    Node* root_;
+    Node* _root;
+    size_t _order;
 
     LeafNode* traverseToLeafNode(Node* node, int key) const;
     std::pair<int, Node*> insertOrUpdateImpl(Node* node, int key, int value);
     std::pair<bool, bool> removeImpl(Node* node, int key); 
+    bool checkFillFactorInvariant() const;
+    size_t internalNodeCapacity() const;
+    size_t leafNodeCapacity() const;
 public:
-    BTree();
+    BTree(size_t order = DEFAULT_ORDER);
     ~BTree();
 
     void print();

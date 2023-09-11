@@ -3,8 +3,6 @@
 #include <stddef.h>
 
 
-#define MAX_NODE_SIZE 4
-
 // TODO: define a enum instead
 #define UNDEFINED 0
 #define INTERNAL_NODE_TYPE 1
@@ -13,11 +11,11 @@
 class Node {
 protected:
    int _nodeType;  
-   size_t _capacity = MAX_NODE_SIZE;
+   size_t _capacity;
 public:
     friend class BTree;
 
-    Node(int nodeType) : _nodeType(nodeType) {
+    Node(int nodeType, size_t capacity) : _nodeType(nodeType), _capacity(capacity) {
 
     };
 

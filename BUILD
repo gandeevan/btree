@@ -1,3 +1,4 @@
+
 cc_library(
     name="btree", 
     srcs=glob(["src/**/*.cpp"]),
@@ -16,7 +17,7 @@ cc_test(
 cc_test(
     name="internal_node_test", 
     srcs=["tests/internal_node_test.cpp"], 
-    deps=["@com_google_googletest//:gtest", "//:btree"],
+    deps=["@com_google_googletest//:gtest", "//:btree", "@cpputilities//:logger"],
 )
 
 cc_test(

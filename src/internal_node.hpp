@@ -6,9 +6,6 @@
 using namespace std;
 
 
-
-
-
 class InternalNode : public Node {
 public:
     friend class BTree;
@@ -46,7 +43,7 @@ public:
         friend std::ostream& operator<<(std::ostream& os, const Value& other);
     };
 
-    InternalNode(int key, Node* left, Node* right) : InternalNode() {
+    InternalNode(size_t capacity, int key, Node* left, Node* right) : InternalNode(capacity) {
         data_.insert({INT_MIN, left});
         data_.insert({key, right});
     }
@@ -62,7 +59,7 @@ public:
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
     // the data item that leads to a split can be inserted before the split. 
-    InternalNode() : Node(INTERNAL_NODE_TYPE), data_(capacity()+1) {
+    InternalNode(size_t capacity) : Node(INTERNAL_NODE_TYPE, capacity), data_(capacity+1) {
 
     }
 

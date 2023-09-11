@@ -14,6 +14,7 @@
 
 #include "btree.hpp"
 #include "internal_node.hpp"
+#include "constants.hpp"
 #include "node.hpp"
 #include <iterator>
 #include <stdexcept>
@@ -23,12 +24,22 @@
 #define TO_INTERNAL_NODE(x) reinterpret_cast<InternalNode *>(x)
 #define TO_LEAF_NODE(x) reinterpret_cast<LeafNode *>(x)
 
-BTree::BTree() {
-    root_ = new LeafNode();
+#ifdef DEBUG
+#define CHECK_INVARIANTS() assert(checkFillFactorInvariant())
+#else
+#define CHECK_INVARIANTS()
+#endif
+
+BTree::BTree(size_t order) : _order(order) {
+    _root = new LeafNode(leafNodeCapacity());
 }
 
 BTree::~BTree() {
     // TODO: delete the tree
+}
+
+size_t BTree::leafNodeCapacity() const {
+    return 2*_order;
 }
 
 LeafNode* BTree::traverseToLeafNode(Node* node, int key) const {
@@ -75,12 +86,12 @@ std::pair<int, Node*> BTree::insertOrUpdateImpl(Node* node, int key, int value) 
 }
 
 void BTree::insertOrUpdate(int key, int value) {
-   auto [newKey, newNode] = insertOrUpdateImpl(root_, key, value);
+   auto [newKey, newNode] = insertOrUpdateImpl(_root, key, value);
    
    // the root has been split, we have a new root
    if(newNode != nullptr) {
-        auto newRoot = new InternalNode(newKey, root_, newNode);
-        root_ = newRoot;
+        auto newRoot = new InternalNode(INTERNAL_NODE_CAPACITY(order), newKey, _root, newNode);
+        _root = newRoot;
    }
 
    return;
@@ -112,11 +123,11 @@ std::pair<bool, bool> BTree::removeImpl(Node* node, int key) {
     found = TO_INTERNAL_NODE(node)->eraseElement(elem);
     assert(found);
 
-    throw runtime_error("Not implemented");
+    THROW_EXCEPTION("Not implemented");
 }
 
 bool BTree::remove(int key) {
-    auto leafNode = traverseToLeafNode(root_, key);
+    auto leafNode = traverseToLeafNode(_root, key);
     bool ok = leafNode->remove(key);
     if(!ok) {
         return false;
@@ -135,13 +146,13 @@ void BTree::print() {
     int maxLevel = 0;
     std::map<int, vector<Node*>> levelMap; 
 
-    if(root_ == nullptr) {
+    if(_root == nullptr) {
         std::cout << "Root equals null!";
         return;
     }
 
     std::queue<std::pair<int, Node *>> q;
-    q.push({0, root_});
+    q.push({0, _root});
     while(!q.empty()) {
         auto [level, node] = q.front();
         q.pop();
@@ -178,10 +189,14 @@ void BTree::print() {
 
 
 std::optional<int> BTree::get(int key) const {
-    auto leafNode = traverseToLeafNode(root_, key);
+    auto leafNode = traverseToLeafNode(_root, key);
     auto it = leafNode->data_.find(key);
     if(it != leafNode->data_.end()) {
         return it->second;
     } 
     return optional<int>();
+}
+
+bool BTree::checkFillFactorInvariant() const {
+    return true;
 }

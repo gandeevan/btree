@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include "constants.hpp"
 
 
 
@@ -24,7 +25,7 @@ void InternalNode::print() {
 
 const InternalNode::Value& InternalNode::at(size_t idx) const {
     if(idx >= this->size()) {
-        throw runtime_error("index out of bounds");
+        THROW_EXCEPTION("index out of bounds");
     }
     return data_.at(idx);
 }
@@ -44,7 +45,7 @@ std::pair<int, InternalNode*> InternalNode::split(int newKey, Node* newNode) {
     // Create a new split node and copy half of the elements from the current node
     // to the split node. The middle key is promoted to the next level to point to 
     // the split node. 
-    InternalNode* splitNode = new InternalNode();
+    InternalNode* splitNode = new InternalNode(capacity());
     int start = data_.size()/2, end = data_.size();
     for(int i=start; i<end; i++) {
         std::cout << "copying element at index " << i << endl; 
@@ -60,10 +61,10 @@ std::pair<int, InternalNode*> InternalNode::split(int newKey, Node* newNode) {
 
 void InternalNode::insert(int key, Node* node) {
     if(isFull()) {
-        throw runtime_error("node is full");
+        THROW_EXCEPTION("node is full");
     }
-    if(!(data_.find({key, nullptr}).has_value())) {
-        throw runtime_error("key " + std::to_string(key) +  " already exists in the node");
+    if(data_.find({key, nullptr}).has_value()) {
+        THROW_EXCEPTION("key " + std::to_string(key) +  " already exists in the node");
     }
     data_.insert({key, node});
     return;

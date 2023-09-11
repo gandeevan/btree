@@ -3,26 +3,33 @@
 #include <stdexcept>
 #include "src/internal_node.hpp"
 #include "src/leaf_node.hpp"
+#include "src/constants.hpp"
+
+// TODO: fix include prefixes
+#include "src/logger/logger.hpp"
 
 
 // TODO:
-// 1. Make the node size configurable and test split with both even and odd number of elements
+// 1. Test splits with both even and odd number of elements
 
 TEST(InternalNodeTest, Insert) {
-    InternalNode *node;
-    SortedArray<InternalNode::Value> expectedNodeData(MAX_NODE_SIZE+1);
+    size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
+    size_t leafNodeCapacity = LEAF_NODE_CAPACITY(DEFAULT_ORDER);
 
-    int insertCount = MAX_NODE_SIZE-1;
-    for(int i=1; i<=insertCount; i++) {
+    SortedArray<InternalNode::Value> expectedNodeData(internalNodeCapacity+1);
+
+    InternalNode *node;
+    for(size_t i=1; i<internalNodeCapacity; i++) {
         if(i==1) {
-            auto leftPtr = new LeafNode(); 
-            auto rightPtr = new LeafNode();
+            auto leftPtr = new LeafNode(leafNodeCapacity); 
+            auto rightPtr = new LeafNode(leafNodeCapacity);
             expectedNodeData.insert({INT_MIN, leftPtr});
             expectedNodeData.insert({i, rightPtr});
-            node = new InternalNode(i, leftPtr, rightPtr);
+            node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
         } else {
-            auto ptr = new LeafNode();
+            auto ptr = new LeafNode(leafNodeCapacity);
             expectedNodeData.insert({i, ptr});
+            LOG_INFO("inserting element {}", i);
             node->insert(i, ptr); 
         }
         ASSERT_EQ(node->size(), i+1);
@@ -31,21 +38,23 @@ TEST(InternalNodeTest, Insert) {
 }
 
 TEST(InternalNodeTest, SplitNode) {
-    int insertCount = MAX_NODE_SIZE-1;
-    InternalNode* node;
+    size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);
+    size_t leafNodeCapacity = LEAF_NODE_CAPACITY(DEFAULT_ORDER);
+    size_t insertCount = internalNodeCapacity-1;
 
+    InternalNode* node;
     std::vector<std::pair<int, Node*>> data;
 
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    for(int i=1; i<=insertCount; i++) {
+    for(size_t i=1; i<=insertCount; i++) {
         if(i==1) {
-            auto leftPtr = new LeafNode(); //ignore
-            auto rightPtr = new LeafNode();
-            node = new InternalNode(i, leftPtr, rightPtr);
+            auto leftPtr = new LeafNode(leafNodeCapacity); //ignore
+            auto rightPtr = new LeafNode(leafNodeCapacity);
+            node = new InternalNode(internalNodeCapacity, i, leftPtr, rightPtr);
             data.push_back({INT_MIN, leftPtr});
             data.push_back({i, rightPtr});
         } else {
-            auto ptr = new LeafNode();
+            auto ptr = new LeafNode(leafNodeCapacity);
             node->insert(i, ptr);
             data.push_back({i, ptr});
         }
@@ -54,17 +63,17 @@ TEST(InternalNodeTest, SplitNode) {
     int sizeBeforeSplit = node->size();
 
     ASSERT_TRUE(node->isFull());
-    ASSERT_THROW(node->insert(data.size(), new LeafNode()), std::runtime_error);
+    ASSERT_THROW(node->insert(data.size(), new LeafNode(leafNodeCapacity)), std::runtime_error);
 
-    data.push_back({data.size(), new LeafNode()});
+    data.push_back({data.size(), new LeafNode(LEAF_NODE_CAPACITY(DEFAULT_ORDER))});
     auto [promotedKey, splitNode] = node->split(data.back().first, data.back().second);
 
 
     int expectedPromotedKey;
-    SortedArray<InternalNode::Value> expectedNodeData(MAX_NODE_SIZE+1);
-    SortedArray<InternalNode::Value> expectedSplitNodeData(MAX_NODE_SIZE+1);
+    SortedArray<InternalNode::Value> expectedNodeData(internalNodeCapacity+1);
+    SortedArray<InternalNode::Value> expectedSplitNodeData(internalNodeCapacity+1);
     sort(data.begin(), data.end());
-    for(int i=0; i<data.size()/2; i++) {
+    for(size_t i=0; i<data.size()/2; i++) {
         if(i==0) {
             expectedNodeData.insert({INT_MIN, data[i].second});
         } else {
@@ -72,7 +81,7 @@ TEST(InternalNodeTest, SplitNode) {
         }
     }
 
-    for(int i=data.size()/2; i<data.size(); i++) {
+    for(size_t i=data.size()/2; i<data.size(); i++) {
         if(i==data.size()/2) {
             expectedPromotedKey = data[i].first;
             expectedSplitNodeData.insert({INT_MIN, data[i].second});

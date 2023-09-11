@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <optional>
+#include "constants.hpp"
 
 using namespace std;
 
@@ -75,7 +76,7 @@ public:
 
     void insert(const T& val) {
         if(len_ == capacity_) {
-            throw runtime_error("cannot insert element - the array is full!");
+            THROW_EXCEPTION("cannot insert element - the array is full!");
         }
         auto idx = getInsertionPoint(val);
         if(idx != len_) {
@@ -96,7 +97,7 @@ public:
 
     void eraseIndex(size_t idx) {
         if(idx >= size()) {
-            throw runtime_error("index out of bounds");
+            THROW_EXCEPTION("index out of bounds");
         }
         eraseIndexRange(idx, idx+1);
     }
