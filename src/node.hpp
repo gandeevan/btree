@@ -28,6 +28,8 @@ public:
         return size() == capacity();
     }
 
+    virtual bool canLendKeys() const = 0;
+
     virtual void print() = 0;
 
     virtual bool empty() = 0;

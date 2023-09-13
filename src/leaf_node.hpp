@@ -19,6 +19,7 @@ public:
     void insert(int key, int value);
     void print();
     bool empty();
+    bool canLendKeys() const;
 private:
     bool isHalfFull() const;
     

@@ -92,3 +92,7 @@ bool InternalNode::eraseElement(const Value& elem) {
 bool InternalNode::isHalfFull() const {
     return data_.size() >= (_order+1);
 }
+
+bool InternalNode::canLendKeys() const {
+    return data_.size() > (_order+1);
+}

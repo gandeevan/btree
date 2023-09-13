@@ -56,6 +56,7 @@ public:
     std::pair<int, InternalNode*> split(int key, Node* node);
     void print();
     bool empty();
+    bool canLendKeys() const;
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
     // the data item that leads to a split can be inserted before the split. This simplifies the split logic.

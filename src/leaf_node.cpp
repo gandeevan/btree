@@ -91,3 +91,7 @@ std::pair<int, LeafNode*> LeafNode::split(int newKey, int newValue) {
     nodeToInsert->insert(newKey, newValue);
     return {splitNode->data_.begin()->first, splitNode};
 }
+
+bool LeafNode::canLendKeys() const {
+    return size() > _order;
+}
