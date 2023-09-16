@@ -11,6 +11,8 @@
 
 using namespace std;
 
+
+
 template<typename T>
 class SortedArray {
 private:
@@ -37,6 +39,60 @@ private:
     }
 
 public:
+    struct Iterator {
+    private:
+        const SortedArray<T>& arr;
+        int idx;
+        bool reverse;
+
+    public:
+        Iterator(const SortedArray<T>& arr, size_t idx, bool reverse) : arr(arr), idx(idx), reverse(reverse) {
+
+        }
+
+        const T& operator*() const {
+            if(*this == arr.end() || *this == arr.rend()) {
+                THROW_EXCEPTION("cannot dereference iterator past end");
+            }
+            return arr.at(idx);
+        }
+
+        bool operator==(const Iterator& other) const {
+            return idx == other.idx && arr == other.arr && reverse == other.reverse;
+        }
+
+        Iterator operator++(int) {
+            if(reverse) {
+                if(*this == arr.rend()) {
+                    THROW_EXCEPTION("cannot increment reverse iterator past end");
+                }
+                idx--;
+            } else {
+                if(*this == arr.end()) {
+                    THROW_EXCEPTION("cannot increment iterator past end");
+                }
+                idx++;     
+            }
+            return *this;
+        }
+    };
+
+    Iterator begin() const {
+        return Iterator(*this, 0, false);
+    }
+
+    Iterator end() const {
+        return Iterator(*this, size(), false);
+    }
+
+    Iterator rbegin() const {
+        return Iterator(*this, size()-1, true);
+    }
+
+    Iterator rend() const {
+        return Iterator(*this, -1, true);
+    }
+
     SortedArray(size_t n) : capacity_(n) {
         arr_.reset(new T[n]);
         memset((void *)arr_.get(), 0, capacity_ * sizeof(T));
@@ -102,7 +158,13 @@ public:
         eraseIndexRange(idx, idx+1);
     }
 
+    /// @brief Erases the elements in the range [start, end)
+    /// @param start start index (inclusive)
+    /// @param end end index (exclusive)
     void eraseIndexRange(size_t start, size_t end) {
+        if(start >= end || end >= size()) {
+            THROW_EXCEPTION("invalid range");
+        }
         size_t count = end-start;
         memset((void *)(arr_.get()+start), 0, count * sizeof(T));
         if(end != len_) {
@@ -110,6 +172,7 @@ public:
         }
         len_ -= count;
     }
+
 
     size_t capacity() const {
         return capacity_;
