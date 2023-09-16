@@ -77,18 +77,26 @@ public:
         }
     };
 
+    /// @brief Returns an iterator to the first element in the array
+    /// @return Iterator to the first element in the array
     Iterator begin() const {
         return Iterator(*this, 0, false);
     }
 
+    /// @brief Returns an iterator to the element past the last element in the array
+    /// @return Iterator to the element past the last element in the array
     Iterator end() const {
         return Iterator(*this, size(), false);
     }
 
+    /// @brief Returns a reverse iterator to the last element in the array
+    /// @return Iterator to the last element in the array
     Iterator rbegin() const {
         return Iterator(*this, size()-1, true);
     }
 
+    /// @brief Returns a reverse iterator to the element before the first element in the array
+    /// @return Iterator to the element before the first element in the array
     Iterator rend() const {
         return Iterator(*this, -1, true);
     }
@@ -107,6 +115,9 @@ public:
     ~SortedArray() {
     }
 
+    /// @brief Returns true if the array is equal to the given array
+    /// @param other The array to compare to 
+    /// @return true if the array is equal to the given array else false
     bool operator==(const SortedArray<T>& other) const {
         if(this->size() != other.size()) {
             std::cout << "size doesn't match, returning false";
@@ -123,6 +134,9 @@ public:
         return true;
     }
 
+    /// @brief Returns the index of the first element with the given value
+    /// @param val value to find
+    /// @return Index of the first element with the given value or empty optional if not found
     std::optional<size_t> find(const T& val) const {
         int idx = getInsertionPoint(val);
         if(idx>0 && arr_[idx-1] == val)
@@ -130,6 +144,8 @@ public:
         return {};
     }
 
+    /// @brief Inserts the given value into the array
+    /// @param val value to insert
     void insert(const T& val) {
         if(len_ == capacity_) {
             THROW_EXCEPTION("cannot insert element - the array is full!");
@@ -142,6 +158,9 @@ public:
         len_++;
     }
 
+    /// @brief Erases the first element with the given value
+    /// @param val value to erase
+    /// @return If the element was erased
     bool eraseElement(const T& val) {
         auto idx = find(val);
         if(!idx.has_value()) {
@@ -151,6 +170,8 @@ public:
         return true;
     }
 
+    /// @brief Erases the element at the given index
+    /// @param idx index of the element to erase
     void eraseIndex(size_t idx) {
         if(idx >= size()) {
             THROW_EXCEPTION("index out of bounds");
@@ -173,15 +194,21 @@ public:
         len_ -= count;
     }
 
-
+    /// @brief Returns the capacity of the array
+    /// @return Capacity of the array
     size_t capacity() const {
         return capacity_;
     }
 
+    /// @brief Returns the number of elements in the array
+    /// @return Number of elements in the array
     size_t size() const {
         return len_;
     }
 
+    /// @brief Returns the element at the given index
+    /// @param index index of the element to return
+    /// @return Element at the given index
     const T& at(size_t index) const {
         return arr_[index];
     }
