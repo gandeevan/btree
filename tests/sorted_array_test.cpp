@@ -150,6 +150,29 @@ TEST(SortedArrayTest, TestReverseIterator) {
     ASSERT_THROW(it++, std::runtime_error);
 }
 
+TEST(SortedArrayTest, TestIteratorArrowOperator) {
+    SortedArray<std::pair<int, int>> arr(5);
+    arr.insert(std::make_pair(1, 1));
+    arr.insert(std::make_pair(3, 3));
+    arr.insert(std::make_pair(5, 5));
+    arr.insert(std::make_pair(2, 2));
+    arr.insert(std::make_pair(4, 4));
+
+    auto it = arr.begin();
+    ASSERT_EQ(it->first, 1);
+    it++;
+    ASSERT_EQ(it->first, 2);
+    it++;
+    ASSERT_EQ(it->first, 3);
+    it++;
+    ASSERT_EQ(it->first, 4);
+    it++;
+    ASSERT_EQ(it->first, 5);
+    it++;
+    ASSERT_EQ(it, arr.end());
+    ASSERT_THROW(it->first, std::runtime_error);
+}
+
 
 
 TEST(SortedArrayTest, TestReplace) {
