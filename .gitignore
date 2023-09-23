@@ -36,3 +36,14 @@
 
 # vscode
 **/.vscode*
+src/leaf_node.hpp
+**/.cache
+
+# Clion
+**/.idea*
+**/cmake-build-debug*
+**/cmake-build-release*
+**/.cache
+**/.clwb
+
+compile_commands.json

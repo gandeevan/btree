@@ -8,6 +8,6 @@ http_archive(
 
 http_archive(
     name = "cpputilities",
-    urls = ["https://github.com/gandeevan/cpp-utilities/archive/refs/tags/v0.1.0.zip"],
-    strip_prefix = "cpp-utilities-0.1.0",
+    urls = ["https://github.com/gandeevan/cpp-utilities/archive/refs/tags/v0.2.0.zip"],
+    strip_prefix = "cpp-utilities-0.2.0",
 )
