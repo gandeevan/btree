@@ -33,7 +33,6 @@ private:
         return left;
     }
 
-    
     void moveArray(size_t idx, size_t pos) {
         memcpy((void *)(arr_.get()+idx+pos), (void *)(arr_.get()+idx), (len_-idx)*sizeof(T));
     }
@@ -55,6 +54,11 @@ public:
                 THROW_EXCEPTION("cannot dereference iterator past end");
             }
             return arr.at(idx);
+        }
+
+        const T* operator->() const {
+            // Return a pointer to the object pointed to by the iterator
+            return &arr.at(idx);
         }
 
         bool operator==(const Iterator& other) const {
@@ -126,7 +130,6 @@ public:
 
         for(size_t i=0; i<this->size(); i++) {
             if(this->at(i) != other.at(i)) {
-                std::cout << "Elements don't match at index " << i << " " << this->at(i) << " != " << other.at(i);
                 return false;
             }
         }
@@ -210,7 +213,35 @@ public:
     /// @param index index of the element to return
     /// @return Element at the given index
     const T& at(size_t index) const {
+        if(index >= size()) {
+            THROW_EXCEPTION("index out of bounds");
+        }
         return arr_[index];
+    }
+
+    const T& operator[](size_t index) {
+        if(index >= size()) {
+            THROW_EXCEPTION("index out of bounds");
+        }
+        return arr_[index];
+    }
+
+    /// @brief Replace the element at the given index with the given value. Will throw an exception if 
+    /// the replacement would cause the array to become unsorted.
+    /// @param index 
+    /// @param val 
+    void replace(size_t index, const T& val) {
+        if(index >= size()) {
+            THROW_EXCEPTION("index out of bounds");
+        }   
+        if(index > 0 && arr_[index-1] > val) {
+            THROW_EXCEPTION("cannot replace element - the array would become unsorted!");
+        }
+        if(index < size()-1 && arr_[index+1] < val) {
+            THROW_EXCEPTION("cannot replace element - the array would become unsorted!");
+        }
+        
+        arr_[index] = val;
     }
 };
 

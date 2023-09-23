@@ -152,6 +152,28 @@ TEST(SortedArrayTest, TestReverseIterator) {
 
 
 
+TEST(SortedArrayTest, TestReplace) {
+    SortedArray<int> arr(5);
+    arr.insert(1);
+    arr.insert(3);
+    arr.insert(5);
+    arr.insert(2);
+    arr.insert(4);
+    ASSERT_EQ(arr.at(0), 1);
+    ASSERT_EQ(arr.at(1), 2);
+    ASSERT_EQ(arr.at(2), 3);
+    ASSERT_EQ(arr.at(3), 4);
+    ASSERT_EQ(arr.at(4), 5);
+
+    arr.replace(0, 0);
+    ASSERT_EQ(arr.at(0), 0);
+    ASSERT_EQ(arr.at(1), 2);
+    ASSERT_EQ(arr.at(2), 3);
+    ASSERT_EQ(arr.at(3), 4);
+    ASSERT_EQ(arr.at(4), 5);
+
+    ASSERT_THROW(arr.replace(0, 4), std::runtime_error);
+}
 
 
 int main(int argc, char **argv) {
