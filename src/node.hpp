@@ -1,5 +1,6 @@
 #pragma once
 
+#include "constants.hpp"
 #include <stddef.h>
 
 
@@ -10,10 +11,14 @@
 
 class Node {
 protected:
-   int _nodeType;  
-   size_t _capacity;
+    int _nodeType;  
+    size_t _capacity;
 
-   virtual bool isHalfFull() const = 0;
+    virtual bool isHalfFull() const = 0;
+    virtual int getLargestKey() const = 0;
+    virtual bool canMerge(Node* other) = 0;
+    virtual BorrowResult tryBorrowFromSiblings(int index, Node* parentNode) = 0;
+    virtual Node* mergeWithSiblings(int index, Node* parentNode) = 0;
 
 public:
     friend class BTree;
