@@ -3,8 +3,14 @@
 #include <stddef.h>
 #include <sstream>
 #include <stdexcept>
-#include <stacktrace>
 #include <iostream>
+
+#ifdef ENABLE_STACKTRACE
+#include <stacktrace>
+#define STACKTRACE() std::stacktrace::current()
+#else
+#define STACKTRACE() ""
+#endif
 
 #define DEFAULT_ORDER 2
 #define LEAF_NODE_CAPACITY(order) (2*order)
@@ -26,22 +32,17 @@ enum class BorrowResult {
 #endif
 
 
-#ifdef _GLIBCXX_HAVE_STACKTRACE
-#define STACKTRACE std::stacktrace::current()
-#else
-#define STACKTRACE ""
-#endif
-
 // TODO: move the assert macro to the utilities project
 #define ASSERT(condition, message) \
 do { \
     if (! (condition)) { \
         std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
-                    << " line " << __LINE__ << ": " << message << STACKTRACE << std::endl; \
+                    << " line " << __LINE__ << ": " << message << STACKTRACE() << std::endl; \
         std::terminate(); \
     } \
 } while (false)
 
+#define PANIC(message) ASSERT(false, message)
 
 // TODO: move the exception class to the utilities project
 

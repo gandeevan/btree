@@ -25,7 +25,7 @@ void InternalNode::print() {
 
 const InternalNode::Value& InternalNode::at(size_t idx) const {
     if(idx >= this->size()) {
-        THROW_EXCEPTION("index out of bounds");
+        PANIC("index out of bounds");
     }
     return data_.at(idx);
 }
@@ -59,10 +59,10 @@ std::pair<int, InternalNode*> InternalNode::split(int newKey, Node* newNode) {
 
 void InternalNode::insert(int key, Node* node) {
     if(isFull()) {
-        THROW_EXCEPTION("node is full");
+        PANIC("node is full");
     }
     if(data_.find({key, nullptr}).has_value()) {
-        THROW_EXCEPTION("key " + std::to_string(key) +  " already exists in the node");
+        PANIC("key " + std::to_string(key) +  " already exists in the node");
     }
     data_.insert({key, node});
     return;
@@ -118,7 +118,7 @@ bool InternalNode::canMerge(Node* other) {
 
 int InternalNode::getLargestKey() const {
     if(data_.size() == 0) {
-        THROW_EXCEPTION("node is empty");
+        PANIC("node is empty");
     }   
     return (*(data_.rbegin())).first();
 }

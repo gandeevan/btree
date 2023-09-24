@@ -1,8 +1,5 @@
 /*
-    TODO(Bug Fixes):
-    -
-
-    TODO(Improvements):
+    TODO:
     - use smart pointers
     - Use a sorted array instead of a map to store the data in the internal/leaf node. 
     - On inserts, try distributing the data with the siblings before attempting to split the node.

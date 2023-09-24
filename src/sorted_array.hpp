@@ -53,7 +53,7 @@ public:
 
         const T& operator*() const {
             if(*this == arr.end() || *this == arr.rend()) {
-                THROW_EXCEPTION("cannot dereference iterator past end");
+                PANIC("cannot dereference iterator past end");
             }
             return arr.at(idx);
         }
@@ -70,12 +70,12 @@ public:
         Iterator operator++(int) {
             if(reverse) {
                 if(*this == arr.rend()) {
-                    THROW_EXCEPTION("cannot increment reverse iterator past end");
+                    PANIC("cannot increment reverse iterator past end");
                 }
                 idx--;
             } else {
                 if(*this == arr.end()) {
-                    THROW_EXCEPTION("cannot increment iterator past end");
+                    PANIC("cannot increment iterator past end");
                 }
                 idx++;     
             }
@@ -126,7 +126,6 @@ public:
     /// @return true if the array is equal to the given array else false
     bool operator==(const SortedArray<T>& other) const {
         if(this->size() != other.size()) {
-            std::cout << "size doesn't match, returning false";
             return false;
         }
 
@@ -153,7 +152,7 @@ public:
     /// @param val value to insert
     void insert(const T& val) {
         if(len_ == capacity_) {
-            THROW_EXCEPTION("cannot insert element - the array is full!");
+            PANIC("cannot insert element - the array is full!");
         }
         auto idx = getInsertionPoint(val);
         if(idx != len_) {
@@ -179,7 +178,7 @@ public:
     /// @param idx index of the element to erase
     void eraseIndex(size_t idx) {
         if(idx >= size()) {
-            THROW_EXCEPTION("index out of bounds");
+            PANIC("index out of bounds");
         }
         eraseIndexRange(idx, idx+1);
     }
@@ -215,14 +214,14 @@ public:
     /// @return Element at the given index
     const T& at(size_t index) const {
         if(index >= size()) {
-            THROW_EXCEPTION("index out of bounds");
+            PANIC("index out of bounds");
         }
         return arr_[index];
     }
 
     const T& operator[](size_t index) {
         if(index >= size()) {
-            THROW_EXCEPTION("index out of bounds");
+            PANIC("index out of bounds");
         }
         return arr_[index];
     }
@@ -233,13 +232,13 @@ public:
     /// @param val 
     void replace(size_t index, const T& val) {
         if(index >= size()) {
-            THROW_EXCEPTION("index out of bounds");
+            PANIC("index out of bounds");
         }   
         if(index > 0 && arr_[index-1] > val) {
-            THROW_EXCEPTION("cannot replace element - the array would become unsorted!");
+            PANIC("cannot replace element - the array would become unsorted!");
         }
         if(index < size()-1 && arr_[index+1] < val) {
-            THROW_EXCEPTION("cannot replace element - the array would become unsorted!");
+            PANIC("cannot replace element - the array would become unsorted!");
         }
         
         arr_[index] = val;

@@ -49,7 +49,7 @@ std::pair<int, int> LeafNode::at(int idx) {
     auto it = data_.begin();
     std::advance(it, idx);
     if(it == data_.end()) {
-        THROW_EXCEPTION("index out of bounds");
+        PANIC("index out of bounds");
     } else {
         return *it;
     }
@@ -65,7 +65,7 @@ bool LeafNode::update(int key, int value) {
 
 void LeafNode::insert(int key, int value) {
     if(isFull()) {
-        THROW_EXCEPTION("node is full");
+        PANIC("node is full");
     }
 
     data_.insert({key, value});
@@ -136,7 +136,7 @@ bool LeafNode::canMerge(Node* other) {
 
 int LeafNode::getLargestKey() const {
     if (data_.size() == 0) {
-        THROW_EXCEPTION("node is empty");
+        PANIC("node is empty");
     }
     return data_.rbegin()->first;
 }
