@@ -1,2 +1,2 @@
-build --cxxopt=-no-pie  --action_env=CC=gcc --cxxopt=-std=c++2b --cxxopt=-Wall --cxxopt=-pedantic --cxxopt=-ggdb3  --dynamic_mode=off  --linkopt=-static
+build  --action_env=CC=gcc --cxxopt=-std=c++2b --cxxopt=-Wall --cxxopt=-pedantic --cxxopt=-ggdb3 
 test --test_output=streamed --test_summary=terse --nocache_test_results

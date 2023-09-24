@@ -1,3 +1,4 @@
+#include "gtest/gtest.h"
 #include <gtest/gtest.h>
 #include "src/sorted_array.hpp"
 
@@ -20,13 +21,12 @@ TEST(SortedArrayTest, TestInsert) {
 }
 
 
-TEST(SortedArrayTest, TestInsertBeyondCapacity) {
+TEST(SortedArrayTest, InsertBeyondCapacityDeathTest) {
     SortedArray<int> arr(3);
     arr.insert(1);
     arr.insert(2);
     arr.insert(3);
-
-    ASSERT_THROW(arr.insert(4), std::runtime_error);
+    ASSERT_DEATH(arr.insert(4), "");
 }
 
 TEST(SortedArrayTest, TestEraseElement) {
@@ -99,7 +99,7 @@ TEST(SortedArrayTest, EraseIndexRangeInvalidRangeDeathTest) {
     ASSERT_DEATH(arr.eraseIndexRange(3, 3),  "");
 }
 
-TEST(SortedArrayTest, TestForwardIterator) {
+TEST(SortedArrayTest, ForwardIteratorDeathTest) {
     SortedArray<int> arr(5);
     arr.insert(1);
     arr.insert(3);
@@ -120,11 +120,11 @@ TEST(SortedArrayTest, TestForwardIterator) {
     it++;
     ASSERT_EQ(it, arr.end());
     
-    ASSERT_THROW(*it, std::runtime_error);
-    ASSERT_THROW(it++, std::runtime_error);
+    ASSERT_DEATH(*it, "");
+    ASSERT_DEATH(it++, "");
 }
 
-TEST(SortedArrayTest, TestReverseIterator) {
+TEST(SortedArrayTest, ReverseIteratorDeathTest) {
     SortedArray<int> arr(5);
     arr.insert(1);
     arr.insert(3);
@@ -144,11 +144,12 @@ TEST(SortedArrayTest, TestReverseIterator) {
     ASSERT_EQ(*it, 1);
     it++;
     ASSERT_EQ(it, arr.rend());
-    ASSERT_THROW(*it, std::runtime_error);
-    ASSERT_THROW(it++, std::runtime_error);
+
+    ASSERT_DEATH(*it, "");
+    ASSERT_DEATH(it++, "");
 }
 
-TEST(SortedArrayTest, TestIteratorArrowOperator) {
+TEST(SortedArrayTest, IteratorArrowOperatorDeathTest) {
     SortedArray<std::pair<int, int>> arr(5);
     arr.insert(std::make_pair(1, 1));
     arr.insert(std::make_pair(3, 3));
@@ -168,12 +169,12 @@ TEST(SortedArrayTest, TestIteratorArrowOperator) {
     ASSERT_EQ(it->first, 5);
     it++;
     ASSERT_EQ(it, arr.end());
-    ASSERT_THROW(it->first, std::runtime_error);
+    ASSERT_DEATH(it->first, "");
 }
 
 
 
-TEST(SortedArrayTest, TestReplace) {
+TEST(SortedArrayTest, ReplaceDeathTest) {
     SortedArray<int> arr(5);
     arr.insert(1);
     arr.insert(3);
@@ -193,7 +194,7 @@ TEST(SortedArrayTest, TestReplace) {
     ASSERT_EQ(arr.at(3), 4);
     ASSERT_EQ(arr.at(4), 5);
 
-    ASSERT_THROW(arr.replace(0, 4), std::runtime_error);
+    ASSERT_DEATH(arr.replace(0, 4), "");
 }
 
 

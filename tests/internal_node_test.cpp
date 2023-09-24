@@ -50,7 +50,6 @@ TEST(InternalNodeTest, Insert) {
         } else {
             auto ptr = new LeafNode(DEFAULT_ORDER);
             expectedNodeData.insert({i, ptr});
-            LOG_INFO("inserting element {}", i);
             node->insert(i, ptr); 
         }
         ASSERT_EQ(node->size(), i+1);
@@ -83,7 +82,7 @@ TEST(InternalNodeTest, SplitNode) {
     int sizeBeforeSplit = node->size();
 
     ASSERT_TRUE(node->isFull());
-    ASSERT_THROW(node->insert(data.size(), new LeafNode(DEFAULT_ORDER)), std::runtime_error);
+    ASSERT_DEATH(node->insert(data.size(), new LeafNode(DEFAULT_ORDER)), "");
 
     data.push_back({data.size(), new LeafNode(DEFAULT_ORDER)});
     auto [promotedKey, splitNode] = node->split(data.back().first, data.back().second);
