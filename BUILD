@@ -5,6 +5,7 @@ cc_library(
     hdrs=glob(["src/**/*.hpp"]),
     deps=[
         "@cpputilities//:logger",
+        "@cpputilities//:utilities",
     ],
 )
 

@@ -1,2 +1,2 @@
-build --action_env=CC=clang --cxxopt=-std=c++20 --cxxopt=-Wall --cxxopt=-Wextra
+build --cxxopt=-O0 --cxxopt=-no-pie  --action_env=CC=gcc13 --cxxopt=-std=c++2b --cxxopt=-Wall --cxxopt=-pedantic --cxxopt=-ggdb3  --dynamic_mode=off  --linkopt=-static  --linkopt=-lstdc++_libbacktrace 
 test --test_output=streamed --test_summary=terse --nocache_test_results

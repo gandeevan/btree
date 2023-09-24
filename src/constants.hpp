@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <sstream>
 #include <stdexcept>
-
+#include <stacktrace>
 #include <iostream>
 
 #define DEFAULT_ORDER 2
@@ -16,6 +16,32 @@ enum class BorrowResult {
     RIGHT,
     NONE
 };
+
+// TODO: move the DEBUG_EXEC macro to the utilities project
+
+#ifdef DEBUG
+#define DEBUG_EXEC(statement) statement
+#else
+#define DEBUG_EXEC(statement)
+#endif
+
+
+#ifdef _GLIBCXX_HAVE_STACKTRACE
+#define STACKTRACE std::stacktrace::current()
+#else
+#define STACKTRACE ""
+#endif
+
+// TODO: move the assert macro to the utilities project
+#define ASSERT(condition, message) \
+do { \
+    if (! (condition)) { \
+        std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
+                    << " line " << __LINE__ << ": " << message << STACKTRACE << std::endl; \
+        std::terminate(); \
+    } \
+} while (false)
+
 
 // TODO: move the exception class to the utilities project
 
@@ -52,6 +78,8 @@ public:
     }
 };
 
+// TODO: move the THROW_EXCEPTION macro to the utilities project
+
 /**
  * @brief Macro for throwing a my_exception with the given error message, file, and line.
  * 
@@ -59,4 +87,19 @@ public:
  * 
  * @param arg The error message.
  */
-#define THROW_EXCEPTION(arg) throw my_exception(arg, __FILE__, __LINE__);
+#define THROW_EXCEPTION(arg) throw Exception(arg, __FILE__, __LINE__);
+
+
+#ifndef DEFER
+struct defer_dummy{};
+template <typename F>
+struct defer_wrapper {
+    F f;
+    ~defer_wrapper() { f(); }
+};
+template <typename F>
+defer_wrapper<F> operator+(defer_dummy, F&& f) {
+    return {std::forward<F>(f)};
+}
+#define defer const auto& defer__##__LINE__ = defer_dummy() + [&]()
+#endif

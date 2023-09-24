@@ -1,6 +1,8 @@
 #pragma once
 
 #include <map>
+#include <cassert>
+#include <limits.h>
 #include "node.hpp"
 #include "sorted_array.hpp"
 using namespace std;
@@ -20,6 +22,10 @@ public:
 
         }
 
+        std::pair<int, Node*> get() const {
+            return data;
+        }
+
         int first() const {
             return data.first;
         }
@@ -30,6 +36,10 @@ public:
 
         bool operator==(const Value& other) const {
             return this->data.first == other.data.first;
+        }
+
+        bool operator!=(const Value& other) const {
+            return !(this->operator==(other));
         }
 
         bool operator>(const Value& other) const {
@@ -48,15 +58,23 @@ public:
         data_.insert({key, right});
     }
 
+    static InternalNode* fromNode(Node *node) {
+        if(node != nullptr) {
+            assert(node->type() == INTERNAL_NODE_TYPE);
+        }
+        return reinterpret_cast<InternalNode *>(node);
+    }
+
     const Value& at(size_t idx) const;
     const SortedArray<Value>& data();
     size_t size() const;
-    bool eraseElement(const Value& elem);
+    void updateKey(int index, int newKey);
+    void eraseIndex(size_t idx);
     void insert(int key, Node* node);
-    std::pair<int, InternalNode*> split(int key, Node* node);
     void print();
     bool empty();
     bool canLendKeys() const;
+    bool eraseElement(const Value& elem);
 private:
     // The capacity of the sorted array is 1 + the capacity of the node so that
     // the data item that leads to a split can be inserted before the split. This simplifies the split logic.
@@ -64,12 +82,16 @@ private:
 
     }
 
+
+    void merge(InternalNode* other, int anchorKey);
+    bool canMerge(Node* other);
     bool isHalfFull() const;
+    int getLargestKey() const;
+    std::pair<int, InternalNode*> split(int key, Node* node);
+    BorrowResult tryBorrowFromSiblings(int index, Node* parent);
+    Node* mergeWithSiblings(int index, Node* parent);
 
-    Value traverseToNextLevel(int key) const;
-
+    size_t traverseToNextLevel(int key) const;
     size_t _order;
-
-    // TODO: rename to _data
-    SortedArray<Value> data_;
+    SortedArray<Value> data_; // TODO: rename to _data
 };

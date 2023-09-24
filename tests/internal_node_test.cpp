@@ -1,16 +1,20 @@
 #include <cstdlib>
-#include <gtest/gtest.h>
 #include <stdexcept>
+
+#include <gtest/gtest.h>
+
 #include "src/internal_node.hpp"
 #include "src/leaf_node.hpp"
 #include "src/constants.hpp"
 
-// TODO: fix include prefixes
-#include "src/logger/logger.hpp"
+#include "logger/logger.hpp"
 
 
-// TODO:
-// 1. Test splits with both even and odd number of elements
+/**
+  TODO:
+    1. Test splits with both even and odd number of elements
+**/
+
 
 TEST(InternalNodeTest, TestIsFull) {
     size_t internalNodeCapacity = INTERNAL_NODE_CAPACITY(DEFAULT_ORDER);

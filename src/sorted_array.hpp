@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <cstring>
 #include <memory>
 #include <stdexcept>
@@ -7,6 +8,7 @@
 #include <iostream>
 #include <algorithm>
 #include <optional>
+#include "logger/logger.hpp"
 #include "constants.hpp"
 
 using namespace std;
@@ -186,9 +188,8 @@ public:
     /// @param start start index (inclusive)
     /// @param end end index (exclusive)
     void eraseIndexRange(size_t start, size_t end) {
-        if(start >= end || end >= size()) {
-            THROW_EXCEPTION("invalid range");
-        }
+        ASSERT(start < end && end <= size(), fmt::format("invalid range start={} end={}, size={}", start, end, size()));
+        
         size_t count = end-start;
         memset((void *)(arr_.get()+start), 0, count * sizeof(T));
         if(end != len_) {

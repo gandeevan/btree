@@ -71,14 +71,12 @@ TEST(SortedArrayTest, TestEraseIndexRange) {
     arr.insert(2);
     arr.insert(4);
 
-    arr.eraseIndexRange(1, 4);
-
-    ASSERT_EQ(arr.size(), 2);
+    arr.eraseIndexRange(1, 5);
+    ASSERT_EQ(arr.size(), 1);
     ASSERT_EQ(arr.at(0), 1);
-    ASSERT_EQ(arr.at(1), 5);
 }
 
-TEST(SortedArrayTest, TestEraseIndexRangeOutOfBounds) {
+TEST(SortedArrayTest, EraseIndexRangeOutOfBoundsDeathTest) {
     SortedArray<int> arr(5);
     arr.insert(1);
     arr.insert(3);
@@ -86,10 +84,10 @@ TEST(SortedArrayTest, TestEraseIndexRangeOutOfBounds) {
     arr.insert(2);
     arr.insert(4);
 
-    ASSERT_THROW(arr.eraseIndexRange(1, 6), std::runtime_error);
+    ASSERT_DEATH(arr.eraseIndexRange(1, 6), "");
 }
 
-TEST(SortedArrayTest, TestEraseIndexRangeInvalidRange) {
+TEST(SortedArrayTest, EraseIndexRangeInvalidRangeDeathTest) {
     SortedArray<int> arr(5);
     arr.insert(1);
     arr.insert(3);
@@ -97,8 +95,8 @@ TEST(SortedArrayTest, TestEraseIndexRangeInvalidRange) {
     arr.insert(2);
     arr.insert(4);
 
-    ASSERT_THROW(arr.eraseIndexRange(3, 2), std::runtime_error);
-    ASSERT_THROW(arr.eraseIndexRange(3, 3), std::runtime_error);
+    ASSERT_DEATH(arr.eraseIndexRange(3, 2),  "");
+    ASSERT_DEATH(arr.eraseIndexRange(3, 3),  "");
 }
 
 TEST(SortedArrayTest, TestForwardIterator) {
