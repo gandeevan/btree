@@ -19,10 +19,10 @@ bazel build //:btree
 ## Test
 Run all tests
 ```bash
-bazel test ... 
+bazel test //:btree_test 
 ```
 
-Enable stack traces if the compiler supports it. The implementation use the std::stacktrace which is a c++23 feature.
+Enable stack traces (if the compiler supports it). The implementation use the std::stacktrace which is a c++23 feature.
 ```bash
-bazel test ... --define enable_stacktrace=true --dynamic_mode=off  
+bazel test //:btree_test  --define enable_stacktrace=true --dynamic_mode=off  
 ```
